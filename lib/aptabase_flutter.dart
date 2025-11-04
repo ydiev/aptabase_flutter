@@ -42,7 +42,9 @@ class Aptabase {
   static late final String _appKey;
   static late final InitOptions _initOptions;
   static late final Uri? _apiUrl;
-  static var _sessionId = _newSessionId();
+
+  static late final bool _handleSessionManually;
+  static String _sessionId = _newSessionId();
   static var _lastTouchTs = DateTime.now().toUtc();
   static Timer? _timer;
   static var _isTimerRunning = false;
@@ -52,11 +54,10 @@ class Aptabase {
   static final instance = Aptabase._();
 
   /// Initializes the Aptabase SDK with the given appKey.
-  static Future<void> init(
-    String appKey, [
-    InitOptions opts = const InitOptions(),
-    StorageManager? storage,
-  ]) async {
+  static Future<void> init(String appKey,
+      {InitOptions opts = const InitOptions(),
+      StorageManager? storage,
+      bool handleSessionManually = false}) async {
     final parts = appKey.split("-");
     assert(
       parts.length == 3,
@@ -90,6 +91,8 @@ class Aptabase {
 
     await _storage.init();
     _logDebug("Storage initialized");
+
+    _handleSessionManually = handleSessionManually;
 
     _listener = AppLifecycleListener(
       onInactive: () => _tick("lifecycle onInactive"),
@@ -157,6 +160,10 @@ class Aptabase {
   /// Returns the session id for the current session.
   /// If the session is too old, a new session id is generated.
   String _evalSessionId() {
+    if (_handleSessionManually) {
+      return _sessionId;
+    }
+
     final now = DateTime.now().toUtc();
     final elapsed = now.difference(_lastTouchTs);
     if (elapsed > _sessionTimeout) {
@@ -180,6 +187,12 @@ class Aptabase {
       "appBuildNumber": sysInfo.buildNumber,
       "sdkVersion": _sdkVersion,
     };
+  }
+
+  void setSessionId(String sessionId) {
+    if (_handleSessionManually) {
+      _sessionId = sessionId;
+    }
   }
 
   /// Records an event with the given name and optional properties.

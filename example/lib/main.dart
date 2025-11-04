@@ -11,8 +11,8 @@ void main() async {
   // If you want to use Hive, an example:
   await Aptabase.init(
     "A-DEV-0000000000",
-    const InitOptions(),
-    StorageManagerHive(),
+    opts: const InitOptions(),
+    storage: StorageManagerHive(),
   );
 
   runApp(const MyApp());
