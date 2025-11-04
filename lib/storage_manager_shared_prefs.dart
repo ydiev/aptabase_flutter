@@ -5,18 +5,6 @@ class StorageManagerSharedPrefs extends StorageManager {
   final _events = <String, String>{};
 
   @override
-  Future<void> init() async {
-    final sharedPrefs = await SharedPreferences.getInstance();
-    final keys = sharedPrefs.getKeys();
-    for (final key in keys) {
-      final value = sharedPrefs.getString(key);
-      if (value != null) _events[key] = value;
-    }
-
-    return super.init();
-  }
-
-  @override
   Future<void> addEvent(String key, String event) async {
     _events[key] = event;
 
