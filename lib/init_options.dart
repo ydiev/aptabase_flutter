@@ -7,11 +7,11 @@ class InitOptions {
     this.host,
     this.tickDuration = _kDefaultTickDuration,
     this.batchLength = _kMaxBatchLength,
-    this.printDebugMessages = false,
+    this.isDebugMode = false,
   }) : assert(batchLength <= _kMaxBatchLength, "Maximum is $_kMaxBatchLength");
 
   final String? host;
   final Duration tickDuration;
   final int batchLength;
-  final bool printDebugMessages;
+  final bool isDebugMode;
 }

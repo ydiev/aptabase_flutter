@@ -179,7 +179,7 @@ class Aptabase {
     final sysInfo = await SystemInfo.get();
 
     return {
-      "isDebug": kDebugMode,
+      "isDebug": _initOptions.isDebugMode,
       "osName": sysInfo.osName,
       "osVersion": sysInfo.osVersion,
       "locale": sysInfo.locale,
@@ -249,7 +249,7 @@ class Aptabase {
 
       _logDebug("Sending ${events.length} events");
 
-      if (kDebugMode && response.statusCode >= 300) {
+      if (_initOptions.isDebugMode && response.statusCode >= 300) {
         final body = await response.transform(utf8.decoder).join();
 
         _logError(
@@ -313,7 +313,7 @@ class Aptabase {
   }
 
   static void _logDebug(String msg) {
-    if (!_initOptions.printDebugMessages) return;
+    if (!_initOptions.isDebugMode) return;
 
     developer.log(
       msg,
